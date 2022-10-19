@@ -70,6 +70,8 @@ export async function apiMatches(req: ServerRequest, toolkit: Toolkit) {
         })).map(([team, players]) => ({ team, players }));
     };
 
+    const referencePlayersDict = await getReferencePlayersDict();
+
     let matches2 = Object.entries(groupBy(matches, x => x.match_id)).map(([matchId, players]) => {
         const match = players[0];
 
@@ -125,11 +127,13 @@ export async function apiMatches(req: ServerRequest, toolkit: Toolkit) {
                 slot: p.slot,
                 team: p.team,
                 won: p.won,
+                replay: p.replay,
                 country: p.country,
-                verified: getReferencePlayersDict()?.[p.profile_id] != null,
+                verified: referencePlayersDict?.[p.profile_id] != null,
             }))),
         };
     })
+
 
     matches2 = sortBy(matches2, m => m.started).reverse();
 
